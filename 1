@@ -1,0 +1,263 @@
+import {Component} from 'react'
+import './index.css'
+
+class DigitalTimer extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      timer: 25,
+      isTimerUpdating: false,
+      seconds: 0,
+    }
+    this.timerId = null
+  }
+
+  onClickPlusButton = () => {
+    const {isTimerUpdating} = this.state
+    if (!isTimerUpdating) {
+      this.setState(prevState => ({timer: prevState.timer + 1}))
+    }
+  }
+
+  onClickMinusButton = () => {
+    const {isTimerUpdating} = this.state
+    if (!isTimerUpdating) {
+      this.setState(prevState => ({timer: prevState.timer - 1}))
+    }
+  }
+
+  onClickResetButton = () => {
+    clearInterval(this.timerId)
+    this.setState({isTimerUpdating: false, timer: 25, seconds: 0})
+  }
+
+  onClickPauseOrStartButton = () => {
+    const {isTimerUpdating} = this.state
+    if (isTimerUpdating) {
+      clearInterval(this.timerId)
+    } else {
+      this.timerId = setInterval(this.onChangeTimerSeconds, 1000)
+    }
+    this.setState(prevState => ({isTimerUpdating: !prevState.isTimerUpdating}))
+  }
+
+  onChangeTimerSeconds = () => {
+    const {seconds} = this.state
+    this.setState(prevState => {
+      if (seconds === 0) {
+        return {
+          timer: prevState.timer - 1,
+          seconds: prevState.seconds + 59,
+        }
+      }
+      return {seconds: prevState.seconds - 1}
+    })
+  }
+
+  render() {
+    const {timer, isTimerUpdating, seconds} = this.state
+    const startOrPauseIcon = isTimerUpdating
+      ? 'https://assets.ccbp.in/frontend/react-js/pause-icon-img.png'
+      : 'https://assets.ccbp.in/frontend/react-js/play-icon-img.png'
+    const startOrPauseAltText = isTimerUpdating ? 'pause icon' : 'play icon'
+    return (
+      <div className="bg-container">
+        <h1 className="heading">Digital Timer</h1>
+        <div className="bg-timer-count-container">
+          <div className="timer-bg-image">
+            <div className="timer-white-background">
+              <h1 className="time">
+                {timer < 10 ? `0${timer}` : timer}:
+                {seconds > 9 ? seconds : `0${seconds}`}
+              </h1>
+              <p className="paused-text">
+                {isTimerUpdating ? 'Running' : 'Paused'}
+              </p>
+            </div>
+          </div>
+          <div className="start-reset-bg-container">
+            <div className="start-reset-container">
+              <div className="icon-text-container">
+                <button
+                  className="reset-pause-icon"
+                  type="button"
+                  onClick={this.onClickPauseOrStartButton}
+                >
+                  <img
+                    alt={startOrPauseAltText}
+                    src={startOrPauseIcon}
+                    style={{width: '30px', height: '30px'}}
+                  />
+
+                  <p className="start-reset-text">
+                    {isTimerUpdating ? 'Pause' : 'Start'}
+                  </p>
+                </button>
+                <button
+                  className="reset-pause-icon"
+                  type="button"
+                  onClick={this.onClickResetButton}
+                >
+                  <img
+                    alt="reset icon"
+                    src="https://assets.ccbp.in/frontend/react-js/reset-icon-img.png"
+                    style={{width: '30px', height: '30px'}}
+                  />
+                  <p className="start-reset-text">Reset</p>
+                </button>
+              </div>
+            </div>
+
+            <p className="set-timer-limit-text">Set Timer limit</p>
+
+            <div className="icon-text-container">
+              <button
+                type="button"
+                className="start-reset-text button-plus-minus"
+                onClick={this.onClickMinusButton}
+              >
+                -
+              </button>
+              <p className="timer-button-container">{timer}</p>
+              <button
+                type="button"
+                className="start-reset-text button-plus-minus"
+                onClick={this.onClickPlusButton}
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+export default DigitalTimer
+.bg-container {
+  background-image: linear-gradient(to bottom, #ffffff, #cffcf1);
+  min-height: 100vh;
+  padding: 40px;
+}
+@media screen and (min-width: 768px) {
+  .bg-container {
+    padding: 60px;
+  }
+}
+.bg-timer-count-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+@media screen and (min-width: 768px) {
+  .bg-timer-count-container {
+    flex-direction: row;
+  }
+}
+.heading {
+  color: #1e293b;
+  font-family: 'Roboto';
+  font-size: 40px;
+  margin-bottom: 0px;
+  text-align: center;
+}
+.timer-bg-image {
+  background-image: url('https://assets.ccbp.in/frontend/react-js/digital-timer-elapsed-bg.png');
+  background-size: cover;
+  height: 500px;
+  min-width: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-left: 50px;
+  margin-bottom: 0px;
+}
+@media screen and (min-width: 768px) {
+  .timer-bg-image {
+    width: 60%;
+    max-width: 600px;
+  }
+}
+.timer-white-background {
+  background-color: #ffffff;
+  border-radius: 70px;
+  padding-right: 10px;
+  padding-left: 10px;
+  text-align: center;
+}
+.time {
+  color: #00d9f5;
+  font-family: 'Roboto';
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 0px;
+}
+.paused-text {
+  color: #0f172a;
+  font-family: 'Roboto';
+  font-size: 13px;
+  font-weight: 900;
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
+.start-reset-bg-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0px;
+}
+.start-reset-container {
+  display: flex;
+  justify-content: space-between;
+}
+.icon-text-container {
+  display: flex;
+  flex-direction: row;
+}
+.reset-pause-icon {
+  background-color: transparent;
+  border: none;
+  height: 10px;
+  margin-top: 0px;
+}
+
+.start-reset-text {
+  color: #0f172a;
+  font-family: 'Roboto';
+  font-size: 26px;
+  font-weight: 600;
+  margin-left: 5px;
+  margin-right: 25px;
+  margin-top: 0px;
+  background-color: transparent;
+  border: none;
+  padding-top: 0px;
+}
+.set-timer-limit-text {
+  color: #0f172a;
+  font-family: 'Roboto';
+  font-size: 18px;
+  margin-top: 10px;
+}
+.button-plus-minus {
+  margin-left: 15px;
+  margin-right: 15px;
+  background-color: transparent;
+  border: none;
+  align-self: center;
+  margin-bottom: 20px;
+}
+.timer-button-container {
+  color: #0f172a;
+  font-size: 30px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 25px;
+  padding-right: 25px;
+  background-image: linear-gradient(to right, #cffcf1, #defafe, #00d9f5);
+  border-radius: 4px;
+  border: none;
+  margin-top: 0px;
+}
